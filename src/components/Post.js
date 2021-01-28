@@ -1,33 +1,17 @@
 import { createElement } from '../util/DomControl.js';
-import { deletePost, updatePost } from '../util/Fetcher.js';
+import { deletePost } from '../util/Fetcher.js';
 export default class Post {
-  constructor($target, post) {
-    this.$target = $target;
+  constructor(dashboard, post) {
+    this.dashboard = dashboard;
     this.post = post;
     this.render();
   }
 
   handleUpdatePost() {
-    const titleBody = prompt(
-      '제목과 내용을 |로 구분해서 작성해',
-      `${this.post.title}|${this.post.body}`
-    );
-    if (!titleBody) return;
-    let index = titleBody.indexOf('|');
-    if (index !== -1) {
-      const newTitle = titleBody.substring(0, index);
-      const newBody = titleBody.substring(index + 1);
-      updatePost({ ...this.post, title: newTitle, body: newBody }).then(
-        (res) => {
-          if (res.error) {
-            alert(res.error);
-          } else {
-            this.post = res;
-            this.onUpdate();
-          }
-        }
-      );
-    }
+    this.dashboard?.postFormPopup?.show(this.post, (newPost) => {
+      this.post = newPost;
+      this.onUpdate();
+    });
   }
   handleDeletePost() {
     deletePost(this.post.id).then((result) => {
@@ -49,13 +33,14 @@ export default class Post {
   }
 
   render() {
+    const dashboardElement = this.dashboard.dashboardElement;
     const { id, title, body, userId } = this.post;
     this.postElement = createElement(
       'div',
       null,
       null,
       { padding: '5px', display: 'inline-block' },
-      this.$target
+      dashboardElement
     );
     this.titleElement = createElement(
       'h2',

@@ -23,3 +23,7 @@ export function createElement(
   }
   return newElement;
 }
+
+export function setVisibility(element, visible) {
+  element.style.display = visible ? 'block' : 'none';
+}

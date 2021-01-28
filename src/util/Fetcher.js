@@ -28,3 +28,12 @@ export async function updatePost(post) {
   if (!post) return;
   return await ajax(`${domain}/posts/${post.id}`, 'PUT', post);
 }
+
+export async function createPost(title, body) {
+  if (!title || !body) return;
+  return await ajax(`${domain}/posts`, 'POST', {
+    title,
+    body,
+    userId: 1,
+  });
+}
