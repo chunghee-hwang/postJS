@@ -1,5 +1,5 @@
 import { createElement, setVisibility } from '../util/DomControl.js';
-import { updatePost } from '../util/Fetcher.js';
+import { createPost, updatePost } from '../util/Fetcher.js';
 
 export default class PostFormPopup {
   constructor(appElement) {
@@ -124,7 +124,7 @@ export default class PostFormPopup {
       },
       popupLayer
     );
-    this.updatePostBtn = createElement(
+    this.addOrUpdatePostBtn = createElement(
       'button',
       null,
       '수정',
@@ -140,14 +140,17 @@ export default class PostFormPopup {
     );
   }
 
-  show(post, onUpdatePost) {
+  show(post = null, onResult) {
     if (post) {
       this.post = post;
       this.titleInput.value = post?.title;
       this.bodyTextarea.value = post?.body;
+      this.isNew = false;
+    } else {
+      this.isNew = true;
     }
-    this.onUpdatePost = onUpdatePost;
     setVisibility(this.popup, true);
+    this.onResult = onResult;
   }
   hide() {
     this.titleInput.value = '';
@@ -157,19 +160,36 @@ export default class PostFormPopup {
 
   setBtnListeners() {
     this.cancelPostBtn.addEventListener('click', (event) => this.hide());
-    this.updatePostBtn.addEventListener('click', (event) => {
+    this.addOrUpdatePostBtn.addEventListener('click', (event) => {
+      if (!this.titleInput.value?.trim() || !this.bodyTextarea.value?.trim()) {
+        alert('제목과 내용은 필수사항이에요.');
+        return;
+      }
+      const title = this.titleInput.value;
+      const body = this.bodyTextarea.value;
       const newPost = {
         ...this.post,
-        title: this.titleInput.value,
-        body: this.bodyTextarea.value,
+        title,
+        body,
       };
-      updatePost(newPost).then((res) => {
-        if (res.error) {
-          alert(res.error);
-        } else {
-          this.onUpdatePost(newPost);
-        }
-      });
+
+      if (this.isNew) {
+        createPost(title, body).then((res) => {
+          if (res.error) {
+            alert(res.error);
+          } else {
+            this.onResult(res);
+          }
+        });
+      } else {
+        updatePost(newPost).then((res) => {
+          if (res.error) {
+            alert(res.error);
+          } else {
+            this.onResult(newPost);
+          }
+        });
+      }
       this.hide();
     });
   }

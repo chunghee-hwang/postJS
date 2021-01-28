@@ -40,8 +40,9 @@ export default class Post {
       null,
       null,
       { padding: '5px', display: 'inline-block' },
-      dashboardElement
+      null
     );
+    dashboardElement.prepend(this.postElement);
     this.titleElement = createElement(
       'h2',
       null,

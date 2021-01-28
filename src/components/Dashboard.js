@@ -4,8 +4,6 @@ import { getPosts } from '../util/Fetcher.js';
 import PostFormPopup from './PostFormPopup.js';
 
 export default class Dashboard {
-  $target = null;
-
   constructor($target) {
     this.$target = $target;
 
@@ -20,11 +18,21 @@ export default class Dashboard {
   }
 
   render() {
-    const $h1 = document.createElement('h1');
-    $h1.innerText = '게시물';
-
-    this.$target.appendChild($h1);
-
+    const dashboardHeaderContainer = createElement(
+      'div',
+      null,
+      null,
+      { display: 'flex' },
+      this.$target
+    );
+    createElement('h1', null, '게시물', null, dashboardHeaderContainer);
+    const newPostBtn = createElement(
+      'button',
+      null,
+      '새 게시물',
+      { 'margin-left': '20px' },
+      dashboardHeaderContainer
+    );
     this.dashboardElement = createElement(
       'div',
       'post-container',
@@ -34,5 +42,11 @@ export default class Dashboard {
     );
 
     this.postFormPopup = new PostFormPopup(this.$target);
+
+    newPostBtn.addEventListener('click', (event) =>
+      this.postFormPopup.show(null, (newPost) => {
+        new Post(this, newPost);
+      })
+    );
   }
 }
