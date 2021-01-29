@@ -39,7 +39,7 @@ export default class Post {
       'div',
       null,
       null,
-      { padding: '5px', display: 'inline-block' },
+      { padding: '5px' },
       null
     );
     dashboardElement.prepend(this.postElement);
