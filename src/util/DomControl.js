@@ -27,3 +27,27 @@ export function createElement(
 export function setVisibility(element, visible) {
   element.style.display = visible ? 'block' : 'none';
 }
+
+export function addClass(element, name) {
+  if (!element || !name) return;
+  element.classList.add(name);
+}
+
+export function removeClass(element, name) {
+  if (!element || !name) return;
+  element.classList.remove(name);
+}
+
+export function createButton(
+  className = null,
+  text = null,
+  style = null,
+  parentElement = null,
+  onClick = null
+) {
+  const btn = createElement('button', className, text, style, parentElement);
+  if (onClick) {
+    btn.addEventListener('click', (e) => onClick(e));
+  }
+  return btn;
+}
